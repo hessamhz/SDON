@@ -12,7 +12,15 @@ import (
 	"net/url"
 )
 
-func CreateLP(urlStr string) {
+func POST(
+	urlStr		string,
+	src 		string,
+	dst 		string,
+	name 		string,
+	class 		string,
+	rate		string,
+	hiearchy	string,
+) {
 
 	requestData := map[string]interface{}{
 		"className": "Connection",
@@ -21,7 +29,7 @@ func CreateLP(urlStr string) {
 				"className": "ConnEndPoint",
 				"ltp": map[string]interface{}{
 					"className": "Ltp",
-					"id":        "ID1",
+					"id":        src,
 				},
 				"endType": "source",
 			},
@@ -29,7 +37,7 @@ func CreateLP(urlStr string) {
 				"className": "ConnEndPoint",
 				"ltp": map[string]interface{}{
 					"className": "Ltp",
-					"id":        "ID2",
+					"id":        dst,
 				},
 				"endType": "sink",
 			},
@@ -43,13 +51,13 @@ func CreateLP(urlStr string) {
 		},
 		"connLps": []map[string]interface{}{
 			{
-				"className": "ConnLpOtu",
-				"rate":      "otu2x",
+				"className": class,
+				"rate":      rate,
 			},
 		},
 		"configurationState": "implemented",
-		"hierarchicalLevel":  "infrastructure",
-		"name":               "MyLightpath10G",
+		"hierarchicalLevel":  hiearchy,
+		"name":               name,
 		"protection":         false,
 	}
 

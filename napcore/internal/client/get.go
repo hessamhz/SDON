@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-func GetInterface(urlStr string) {
+func GET(urlStr string) {
 	// Create a new cookie jar
 	jar, _ := cookiejar.New(nil)
 
