@@ -1,17 +1,18 @@
 package client
 
 import (
-	"napcore/internal/utils"
-
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
+	"napcore/internal/utils"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strings"
 )
 
-func GET(urlStr string) {
+// Modify the GET function to return the response body (ID)
+func GET(urlStr string) (string, error) {
 	// Create a new cookie jar
 	jar, _ := cookiejar.New(nil)
 
@@ -19,7 +20,7 @@ func GET(urlStr string) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		fmt.Println("Error parsing URL:", err)
-		return
+		return "", err
 	}
 
 	// Parse the cookies from your cookie file and add them to the cookie jar
@@ -37,14 +38,14 @@ func GET(urlStr string) {
 	req, err := http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return
+		return "", err
 	}
 
 	// Send the request
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error sending request:", err)
-		return
+		return "", err
 	}
 	defer resp.Body.Close()
 
@@ -52,9 +53,11 @@ func GET(urlStr string) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return
+		return "", err
 	}
 
-	// Print the JSON response
-	fmt.Println(string(body))
+	result := strings.TrimSpace(strings.Trim(string(body), "[]"))
+
+	// Return the response body as the ID
+	return result, err
 }
