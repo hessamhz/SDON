@@ -1,0 +1,81 @@
+<!-- counter.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Word Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 400px;
+            height: 150px;
+            resize: vertical;
+        }
+
+        input[type="submit"] {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        p.error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Word Counter</h1>
+
+    <form method="post" action="{% url 'word_count' %}">
+        {% csrf_token %}
+        <label for="input-text">Enter text:</label><br>
+        <!--Alternatively we can put required here but I wanted to show errors-->
+        <textarea id="input-text" name="text" placeholder="Enter your text"></textarea><br>
+        <input type="submit" value="Count Words">
+        {% if form.errors %}
+        <p class="error-message">{{ form.text.errors.as_text }}</p>
+        {% endif %}
+    </form>
+
+    {% if word_count %}
+    <h2>Word Count: {{ word_count }}</h2>
+    {% endif %}
+</body>
+
+</html>
+
+
+</html>
