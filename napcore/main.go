@@ -23,27 +23,20 @@ func main() {
 		ConnName:          "FatihConnection",
 		HierarchicalLevel: "infrastructure",
 	}
+	//Only  one 10GB or 	up to 10 1GB Service is allowed
 
 	service_params := abstractions.ServiceParams{
 		BASE_URL:   BASE_URL,
 		NE_SRC:     "team1-NE-1",
 		NE_DST:     "team1-NE-2",
-		NB_SERVICE: 3,
+		SERV_RATE:  "10Gb",
+		NB_SERVICE: 1,
 	}
+	fmt.Println(params)
+	abstractions.CreateInfra(params)
 
-	//abstractions.CreateInfra(params)
+	abstractions.CreateLP(service_params)
 
-	//abstractions.CreateLP(service_params)
-
-	abstractions.DeleteConn(service_params, params)
-	//client.POST(postUrlStr, "94", "152", "TestSecSrvc", "ConnLpEthCbr", "1Gb", "service") // id: 85
-
-	//fmt.Println("Get Service")
-	//urlStr = env.BaseURL + "onc/connection?name==FatihConnection&select(id)"
-	//client.GET(urlStr)
-
-	//fmt.Println("Deleting")
-	//urlStr = env.BaseURL + "onc/connection/78"
-	//client.DELETE(urlStr)
+	//abstractions.DeleteConn(service_params, params)
 
 }

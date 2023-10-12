@@ -11,13 +11,37 @@ type ServiceParams struct {
 	BASE_URL   string
 	NE_SRC     string
 	NE_DST     string
+	SERV_RATE  string
 	NB_SERVICE int
 }
 
-func CreateLP(params ServiceParams) {
+func CreateLP(params ServiceParams) string {
 	// Get ports for Port_Src and Port_Dst
-	Port_Src := getPorts(params.BASE_URL, params.NE_SRC)
-	Port_Dst := getPorts(params.BASE_URL, params.NE_DST)
+
+	if params.SERV_RATE == "10Gb" {
+		// Check if NB_SERVICE is not equal to 1
+		if params.NB_SERVICE != 1 {
+			fmt.Println("Error: Only one 10Gb service is allowed.")
+			return "Error: Only one 10Gb service is allowed."
+		}
+	} else if params.SERV_RATE == "1Gb" {
+		// Check if NB_SERVICE is greater than 10
+		if params.NB_SERVICE > 10 {
+			fmt.Println("Error: NB_SERVICE can be at most 10 for 1Gb service.")
+			return "Error: NB_SERVICE can be at most 10 for 1Gb service."
+		} else if params.NB_SERVICE < 1 {
+			fmt.Println("Error: NB_SERVICE must be at least 1 for 1Gb service.")
+			return "Error: NB_SERVICE must be at least 1 for 1Gb service."
+		}
+	} else {
+		fmt.Println("Error: Unsupported service rate. Only '1Gb' and '10Gb' are allowed.")
+		return "Error: Unsupported service rate. Only '1Gb' and '10Gb' are allowed."
+	}
+
+	// If the code reaches this point, it means the conditions are met, and you can proceed with the rest of the code.
+
+	Port_Src := getPorts(params.BASE_URL, params.NE_SRC, params.SERV_RATE)
+	Port_Dst := getPorts(params.BASE_URL, params.NE_DST, params.SERV_RATE)
 	fmt.Println("Port_SRC", Port_Src)
 	fmt.Println("Port_DST", Port_Dst)
 
@@ -27,14 +51,21 @@ func CreateLP(params ServiceParams) {
 	Port_IDs := getPortIDs(Port_Common, params.BASE_URL, params.NE_SRC, params.NE_DST)
 	fmt.Println("Port_IDs:", Port_IDs)
 
-	fmt.Println("Port_IDs:", Port_IDs)
 	post_port_IDs(Port_IDs, params)
 
+	return string(params.NB_SERVICE) + "Service Created with each rate:" + params.SERV_RATE
 }
 
-func getPorts(BASE_URL, NEName string) []string {
+func getPorts(BASE_URL, NEName string, ServiceState string) []string {
 	fmt.Println("Ports")
-	urlStr := BASE_URL + "onc/ltp?ltpType==physical&ne.name==" + NEName + "&select(id,name)&name==OGBE1-*"
+
+	var urlStr string
+	if ServiceState == "1Gb" {
+		urlStr = BASE_URL + "onc/ltp?ltpType==physical&ne.name==" + NEName + "&select(id,name)&name==OGBE1-*"
+
+	} else {
+		urlStr = BASE_URL + "onc/ltp?ltpType==physical&ne.name==" + NEName + "&select(id,name)&name==OGBE10-*"
+	}
 
 	Ports, err := client.GET(urlStr)
 	if err != nil {
@@ -123,7 +154,7 @@ func post_port_IDs(Port_IDs [][]string, params ServiceParams) {
 		service_name := "Service_" + strconv.Itoa(i+1)
 		what_iam_doing := "I am posting to " + postUrlStr + " from source port ID: " + Port_IDs[i][0] + " to destination port ID: " + Port_IDs[i][1] + " with service name: " + service_name
 		fmt.Println(what_iam_doing)
-		client.POST(postUrlStr, Port_IDs[i][0], Port_IDs[i][1], service_name, "ConnLpEthCbr", "1Gb", "service")
+		client.POST(postUrlStr, Port_IDs[i][0], Port_IDs[i][1], service_name, "ConnLpEthCbr", params.SERV_RATE, "service")
 
 	}
 	//client.POST(postUrlStr, Port_IDs[0][0], Port_IDs[0][1], "TestSecSrvc", "ConnLpEthCbr", "1Gb", "service")
