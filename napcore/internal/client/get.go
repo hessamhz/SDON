@@ -59,5 +59,5 @@ func GET(urlStr string) (string, error) {
 	result := strings.TrimSpace(strings.Trim(string(body), "[]"))
 
 	// Return the response body as the ID
-	return result, err
+	return result, nil
 }
