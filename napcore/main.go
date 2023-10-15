@@ -15,22 +15,22 @@ func main() {
 	BASE_URL := env.BaseURL
 
 	Params := functions.InfrastructureParams{
-		BASE_URL:           BASE_URL,
-		INFRA_LINE:         "OTU2x-1-1-1",
-		NE_SRC:             "team1-NE-1",
-		NE_DST:             "team1-NE-2",
-		CONN_NAME:          "FatihConnection",
-		HIERARCHICAL_LEVEL: "infrastructure",
+		BaseUrl:           BASE_URL,
+		InfraLine:         "OTU2x-1-1-1",
+		NeSrc:             "team1-NE-1",
+		NeDst:             "team1-NE-2",
+		ConnName:          "FatihConnection",
+		HierarchicalLevel: "infrastructure",
 	}
 
 	//Only  one 10GB or 	up to 10 1GB Service is allowed
 
 	ServiceParams := functions.ServiceParams{
-		BASE_URL:   BASE_URL,
-		NE_SRC:     "team1-NE-1",
-		NE_DST:     "team1-NE-2",
-		SERV_RATE:  "10Gb",
-		NB_SERVICE: 1,
+		BaseUrl:   BASE_URL,
+		NeSrc:     "team1-NE-1",
+		NeDst:     "team1-NE-2",
+		ServRate:  "10Gb",
+		NbService: 1,
 	}
 
 	DeleteInfrastructureAsWell := true

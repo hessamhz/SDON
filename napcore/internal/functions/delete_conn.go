@@ -11,14 +11,14 @@ func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, dele
 
 	if deleteInfrastructure {
 		// First Delete Services
-		deleteResponse, err = deleteService(Serv_Params.BASE_URL, Inf_Params.CONN_NAME, Serv_Params.NB_SERVICE)
+		deleteResponse, err = deleteService(Serv_Params.BaseUrl, Inf_Params.ConnName, Serv_Params.NbService)
 		if err != nil {
 			return deleteResponse, err
 		}
 		fmt.Println(deleteResponse)
 
 		// Delete Infrastructure as well
-		infraResponse, infraErr := deleteServiceAndInfrastructure(Serv_Params.BASE_URL, Inf_Params.CONN_NAME)
+		infraResponse, infraErr := deleteServiceAndInfrastructure(Serv_Params.BaseUrl, Inf_Params.ConnName)
 		if infraErr != nil {
 			return infraResponse, infraErr
 		}
@@ -26,7 +26,7 @@ func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, dele
 
 	} else {
 		// If deleteInfrastructure is false, just delete services
-		deleteResponse, err = deleteService(Serv_Params.BASE_URL, Inf_Params.CONN_NAME, Serv_Params.NB_SERVICE)
+		deleteResponse, err = deleteService(Serv_Params.BaseUrl, Inf_Params.ConnName, Serv_Params.NbService)
 		if err != nil {
 			return deleteResponse, err
 		}
@@ -36,21 +36,21 @@ func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, dele
 	return deleteResponse, nil
 }
 
-func deleteService(BASE_URL string, connName string, NB_SERVICE int) (string, error) {
+func deleteService(BaseUrl string, connName string, NB_SERVICE int) (string, error) {
 
 	var deleteResponse string
 
 	for i := 1; i <= NB_SERVICE; i++ {
 		ServiceNum := fmt.Sprintf("%d", i)
 
-		urlStrConn := BASE_URL + "onc/connection?name==Service_" + ServiceNum + "&select(id)"
+		urlStrConn := BaseUrl + "onc/connection?name==Service_" + ServiceNum + "&select(id)"
 		connID, err := client.GET(urlStrConn)
 		if err != nil {
 			fmt.Println("Error getting client ID:", err)
 			return "", err
 		}
 
-		urlStrConnSerDel := BASE_URL + "onc/connection/" + connID
+		urlStrConnSerDel := BaseUrl + "onc/connection/" + connID
 		fmt.Println("CONNID", urlStrConnSerDel)
 		deleteResponse, err := client.DELETE(urlStrConnSerDel)
 		if err != nil {
@@ -64,16 +64,16 @@ func deleteService(BASE_URL string, connName string, NB_SERVICE int) (string, er
 
 }
 
-func deleteServiceAndInfrastructure(BASE_URL string, connName string) (string, error) {
+func deleteServiceAndInfrastructure(BaseUrl string, connName string) (string, error) {
 
-	urlStrConnInfra := BASE_URL + "onc/connection?name==" + connName + "&select(id)"
+	urlStrConnInfra := BaseUrl + "onc/connection?name==" + connName + "&select(id)"
 	infraConnID, err := client.GET(urlStrConnInfra)
 	if err != nil {
 		fmt.Println("Error getting client ID:", err)
 		return "", err
 	}
 
-	urlStrConnInfraDel := BASE_URL + "onc/connection/" + infraConnID
+	urlStrConnInfraDel := BaseUrl + "onc/connection/" + infraConnID
 	fmt.Println("CONNID", urlStrConnInfraDel)
 
 	deleteResponse, err := client.DELETE(urlStrConnInfraDel)

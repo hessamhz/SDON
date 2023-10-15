@@ -8,28 +8,28 @@ import (
 )
 
 type ServiceParams struct {
-	BASE_URL   string
-	NE_SRC     string
-	NE_DST     string
-	SERV_RATE  string
-	NB_SERVICE int
+	BaseUrl   string
+	NeSrc     string
+	NeDst     string
+	ServRate  string
+	NbService int
 }
 
 func CreateLP(params ServiceParams) string {
 	// Get ports for Port_Src and Port_Dst
 
-	if params.SERV_RATE == "10Gb" {
+	if params.ServRate == "10Gb" {
 		// Check if NB_SERVICE is not equal to 1
-		if params.NB_SERVICE != 1 {
+		if params.NbService != 1 {
 			fmt.Println("Error: Only one 10Gb service is allowed.")
 			return "Error: Only one 10Gb service is allowed."
 		}
-	} else if params.SERV_RATE == "1Gb" {
+	} else if params.ServRate == "1Gb" {
 		// Check if NB_SERVICE is greater than 10
-		if params.NB_SERVICE > 10 {
+		if params.NbService > 10 {
 			fmt.Println("Error: NB_SERVICE can be at most 10 for 1Gb service.")
 			return "Error: NB_SERVICE can be at most 10 for 1Gb service."
-		} else if params.NB_SERVICE < 1 {
+		} else if params.NbService < 1 {
 			fmt.Println("Error: NB_SERVICE must be at least 1 for 1Gb service.")
 			return "Error: NB_SERVICE must be at least 1 for 1Gb service."
 		}
@@ -40,15 +40,15 @@ func CreateLP(params ServiceParams) string {
 
 	// If the code reaches this point, it means the conditions are met, and you can proceed with the rest of the code.
 
-	portSrc := getPorts(params.BASE_URL, params.NE_SRC, params.SERV_RATE)
-	portDst := getPorts(params.BASE_URL, params.NE_DST, params.SERV_RATE)
+	portSrc := getPorts(params.BaseUrl, params.NeSrc, params.ServRate)
+	portDst := getPorts(params.BaseUrl, params.NeDst, params.ServRate)
 	fmt.Println("portSrc", portSrc)
 	fmt.Println("portDst", portDst)
 
-	portCommon := getCommonPorts(portSrc, portDst, params.NB_SERVICE)
+	portCommon := getCommonPorts(portSrc, portDst, params.NbService)
 	fmt.Println("Common Ports", portCommon)
 
-	portIDs := getPortIDs(portCommon, params.BASE_URL, params.NE_SRC, params.NE_DST)
+	portIDs := getPortIDs(portCommon, params.BaseUrl, params.NeSrc, params.NeDst)
 	fmt.Println("portIDs:", portIDs)
 
 	postResponse, err := postPortIDs(portIDs, params)
@@ -57,18 +57,18 @@ func CreateLP(params ServiceParams) string {
 		return "Error has occured for postPortIDs function"
 	}
 
-	return strconv.Itoa(params.NB_SERVICE) + "Service Created with each rate:" + params.SERV_RATE + postResponse
+	return strconv.Itoa(params.NbService) + "Service Created with each rate:" + params.ServRate + postResponse
 }
 
-func getPorts(BASE_URL, neName string, serviceState string) []string {
+func getPorts(BaseURL, neName string, serviceState string) []string {
 	fmt.Println("Ports")
 
 	var urlStr string
 	if serviceState == "1Gb" {
-		urlStr = BASE_URL + "onc/ltp?ltpType==physical&ne.name==" + neName + "&select(id,name)&name==OGBE1-*"
+		urlStr = BaseURL + "onc/ltp?ltpType==physical&ne.name==" + neName + "&select(id,name)&name==OGBE1-*"
 
 	} else {
-		urlStr = BASE_URL + "onc/ltp?ltpType==physical&ne.name==" + neName + "&select(id,name)&name==OGBE10-*"
+		urlStr = BaseURL + "onc/ltp?ltpType==physical&ne.name==" + neName + "&select(id,name)&name==OGBE10-*"
 	}
 
 	ports, err := client.GET(urlStr)
@@ -121,7 +121,7 @@ func getCommonPorts(port_src []string, port_dst []string, number_of_service int)
 	return common
 }
 
-func getPortIDs(common_ports []string, BASE_URL string, NE_SRC string, NE_DST string) [][]string {
+func getPortIDs(common_ports []string, BaseUrl string, NE_SRC string, NE_DST string) [][]string {
 
 	fmt.Println("Get by port")
 
@@ -129,8 +129,8 @@ func getPortIDs(common_ports []string, BASE_URL string, NE_SRC string, NE_DST st
 
 	for _, X := range common_ports {
 		// Build the URL strings for Src and Dst
-		urlStr_Src := BASE_URL + "onc/ltp?name==" + X + "&ne.name==" + NE_SRC + "&select(id)"
-		urlStr_Dst := BASE_URL + "onc/ltp?name==" + X + "&ne.name==" + NE_DST + "&select(id)"
+		urlStr_Src := BaseUrl + "onc/ltp?name==" + X + "&ne.name==" + NE_SRC + "&select(id)"
+		urlStr_Dst := BaseUrl + "onc/ltp?name==" + X + "&ne.name==" + NE_DST + "&select(id)"
 		Port_Src_ID, err := client.GET(urlStr_Src)
 		if err != nil {
 			fmt.Println("Error getting client ID:", err)
@@ -155,12 +155,12 @@ func getPortIDs(common_ports []string, BASE_URL string, NE_SRC string, NE_DST st
 func postPortIDs(Port_IDs [][]string, params ServiceParams) (string, error) {
 
 	var postResponse string
-	postUrlStr := params.BASE_URL + "onc/connection"
-	for i := 0; i < params.NB_SERVICE; i++ {
+	postUrlStr := params.BaseUrl + "onc/connection"
+	for i := 0; i < params.NbService; i++ {
 		service_name := "Service_" + strconv.Itoa(i+1)
 		ServiceInfo := "posting to " + postUrlStr + " from source port ID: " + Port_IDs[i][0] + " to destination port ID: " + Port_IDs[i][1] + " with service name: " + service_name
 		fmt.Println(ServiceInfo)
-		postResponse, err := client.POST(postUrlStr, Port_IDs[i][0], Port_IDs[i][1], service_name, "ConnLpEthCbr", params.SERV_RATE, "service")
+		postResponse, err := client.POST(postUrlStr, Port_IDs[i][0], Port_IDs[i][1], service_name, "ConnLpEthCbr", params.ServRate, "service")
 		if err != nil {
 			fmt.Println("Error", err)
 			return "", err
