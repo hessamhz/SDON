@@ -5,20 +5,20 @@ import (
 	"napcore/internal/client"
 )
 
-func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, deleteInfrastructure bool) (string, error) {
+func DeleteConn(ServParams ServiceParams, InfParams InfrastructureParams, deleteInfrastructure bool) (string, error) {
 	var deleteResponse string
 	var err error
 
 	if deleteInfrastructure {
 		// First Delete Services
-		deleteResponse, err = deleteService(Serv_Params.BaseUrl, Inf_Params.ConnName, Serv_Params.NbService)
+		deleteResponse, err = deleteService(ServParams.BaseUrl, ServParams.NbService)
 		if err != nil {
 			return deleteResponse, err
 		}
 		fmt.Println(deleteResponse)
 
 		// Delete Infrastructure as well
-		infraResponse, infraErr := deleteServiceAndInfrastructure(Serv_Params.BaseUrl, Inf_Params.ConnName)
+		infraResponse, infraErr := deleteServiceAndInfrastructure(ServParams.BaseUrl, InfParams.ConnName)
 		if infraErr != nil {
 			return infraResponse, infraErr
 		}
@@ -26,7 +26,7 @@ func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, dele
 
 	} else {
 		// If deleteInfrastructure is false, just delete services
-		deleteResponse, err = deleteService(Serv_Params.BaseUrl, Inf_Params.ConnName, Serv_Params.NbService)
+		deleteResponse, err = deleteService(ServParams.BaseUrl, ServParams.NbService)
 		if err != nil {
 			return deleteResponse, err
 		}
@@ -36,14 +36,14 @@ func DeleteConn(Serv_Params ServiceParams, Inf_Params InfrastructureParams, dele
 	return deleteResponse, nil
 }
 
-func deleteService(BaseUrl string, connName string, NB_SERVICE int) (string, error) {
+func deleteService(BaseUrl string, NbService int) (string, error) {
 
 	var deleteResponse string
 
-	for i := 1; i <= NB_SERVICE; i++ {
-		ServiceNum := fmt.Sprintf("%d", i)
+	for i := 1; i <= NbService; i++ {
+		serviceNum := fmt.Sprintf("%d", i)
 
-		urlStrConn := BaseUrl + "onc/connection?name==Service_" + ServiceNum + "&select(id)"
+		urlStrConn := BaseUrl + "onc/connection?name==Service_" + serviceNum + "&select(id)"
 		connID, err := client.GET(urlStrConn)
 		if err != nil {
 			fmt.Println("Error getting client ID:", err)

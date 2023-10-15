@@ -6,17 +6,17 @@ import (
 )
 
 type InfrastructureParams struct {
-	BASE_URL           string
-	INFRA_LINE         string
-	NE_SRC             string
-	NE_DST             string
-	CONN_NAME          string
-	HIERARCHICAL_LEVEL string
+	BaseUrl           string
+	InfraLine         string
+	NeSrc             string
+	NeDst             string
+	ConnName          string
+	HierarchicalLevel string
 }
 
 func CreateInfra(params InfrastructureParams) (string, error) {
 
-	ID1, err := getNeID(params.BASE_URL, params.INFRA_LINE, params.NE_SRC)
+	ID1, err := getNeID(params.BaseUrl, params.InfraLine, params.NeSrc)
 	if err != nil {
 		// Handle the error, e.g., log it, return a default value, or exit
 		fmt.Println("Error:", err)
@@ -26,7 +26,7 @@ func CreateInfra(params InfrastructureParams) (string, error) {
 		fmt.Println("ID1:", ID1)
 	}
 
-	ID2, err := getNeID(params.BASE_URL, params.INFRA_LINE, params.NE_DST)
+	ID2, err := getNeID(params.BaseUrl, params.InfraLine, params.NeDst)
 	if err != nil {
 		// Handle the error, e.g., log it, return a default value, or exit
 		fmt.Println("Error:", err)
@@ -36,8 +36,8 @@ func CreateInfra(params InfrastructureParams) (string, error) {
 		fmt.Println("ID2:", ID2)
 	}
 
-	postURLStr := params.BASE_URL + "onc/connection"
-	createInfraResponse, err := client.POST(postURLStr, ID1, ID2, params.CONN_NAME, "ConnLpOtu", "otu2x", params.HIERARCHICAL_LEVEL)
+	postURLStr := params.BaseUrl + "onc/connection"
+	createInfraResponse, err := client.POST(postURLStr, ID1, ID2, params.ConnName, "ConnLpOtu", "otu2x", params.HierarchicalLevel)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return "", err
@@ -47,8 +47,8 @@ func CreateInfra(params InfrastructureParams) (string, error) {
 
 }
 
-func getNeID(BASE_URL, INFRA_LINE, neName string) (string, error) {
-	urlStr := BASE_URL + "onc/ltp?name==" + INFRA_LINE + "&ne.name==" + neName + "&select(id)"
+func getNeID(BaseUrl, InfraLine, neName string) (string, error) {
+	urlStr := BaseUrl + "onc/ltp?name==" + InfraLine + "&ne.name==" + neName + "&select(id)"
 
 	ID, err := client.GET(urlStr)
 	if err != nil {

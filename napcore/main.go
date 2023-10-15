@@ -34,21 +34,20 @@ func main() {
 	}
 
 	DeleteInfrastructureAsWell := true
-	/*
-			CreateInfraResponse, err := functions.CreateInfra(Params)
-			if err != nil {
-				fmt.Println("Error", err)
-			} else {
-				fmt.Println("CreateInfraResponse", CreateInfraResponse)
-			}
 
-			fmt.Println("Infrastructure Created now its turn for CreateLPResponse ")
+	CreateInfraResponse, err := functions.CreateInfra(Params)
+	if err != nil {
+		fmt.Println("Error", err)
+	} else {
+		fmt.Println("CreateInfraResponse", CreateInfraResponse)
+	}
 
+	fmt.Println("Infrastructure Created now its turn for CreateLPResponse ")
 
-		CreateLPResponse := functions.CreateLP(ServiceParams)
-		fmt.Println("CreateLPResponse", CreateLPResponse)
-		fmt.Println("Lightpath Created now its turn for Delete Connections ")
-	*/
+	CreateLPResponse := functions.CreateLP(ServiceParams)
+	fmt.Println("CreateLPResponse", CreateLPResponse)
+	fmt.Println("Lightpath Created now its turn for Delete Connections ")
+
 	DeleteResponse, err := functions.DeleteConn(ServiceParams, Params, DeleteInfrastructureAsWell)
 	if err != nil {
 		fmt.Println("Error", err)
