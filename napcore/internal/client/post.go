@@ -13,14 +13,14 @@ import (
 )
 
 func POST(
-	urlStr		string,
-	src 		string,
-	dst 		string,
-	name 		string,
-	class 		string,
-	rate		string,
-	hiearchy	string,
-) {
+	urlStr string,
+	src string,
+	dst string,
+	name string,
+	class string,
+	rate string,
+	hiearchy string,
+) (string, error) {
 
 	requestData := map[string]interface{}{
 		"className": "Connection",
@@ -74,7 +74,7 @@ func POST(
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		fmt.Println("Error parsing URL:", err)
-		return
+		return "", err
 	}
 
 	// Parse the cookies from your cookie file and add them to the cookie jar
@@ -92,7 +92,7 @@ func POST(
 	req, err := http.NewRequest("POST", urlStr, bytes.NewBuffer(requestBody))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return
+		return "", err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -102,7 +102,7 @@ func POST(
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error sending request:", err)
-		return
+		return "", err
 	}
 	defer resp.Body.Close()
 
@@ -110,9 +110,11 @@ func POST(
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return
+		return "", err
 	}
 
 	// Print the JSON response
 	fmt.Println(string(body))
+
+	return string(body), nil
 }
