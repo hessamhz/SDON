@@ -5,8 +5,8 @@ import (
 	"napcore/internal/client"
 )
 
-func DeleteConn(ServParams ServiceParams, InfParams InfrastructureParams, deleteInfrastructure bool) (string, error) {
-	var deleteResponse string
+func DeleteConn(ServParams ServiceParams, InfParams InfrastructureParams, deleteInfrastructure bool) (bool, error) {
+	var deleteResponse bool
 	var err error
 
 	if deleteInfrastructure {
@@ -36,9 +36,7 @@ func DeleteConn(ServParams ServiceParams, InfParams InfrastructureParams, delete
 	return deleteResponse, nil
 }
 
-func deleteService(BaseUrl string, NbService int) (string, error) {
-
-	var deleteResponse string
+func deleteService(BaseUrl string, NbService int) (bool, error) {
 
 	for i := 1; i <= NbService; i++ {
 		serviceNum := fmt.Sprintf("%d", i)
@@ -47,7 +45,7 @@ func deleteService(BaseUrl string, NbService int) (string, error) {
 		connID, err := client.GET(urlStrConn)
 		if err != nil {
 			fmt.Println("Error getting client ID:", err)
-			return "", err
+			return false, err
 		}
 
 		urlStrConnSerDel := BaseUrl + "onc/connection/" + connID
@@ -60,17 +58,17 @@ func deleteService(BaseUrl string, NbService int) (string, error) {
 
 	}
 
-	return deleteResponse, nil
+	return true, nil
 
 }
 
-func deleteServiceAndInfrastructure(BaseUrl string, connName string) (string, error) {
+func deleteServiceAndInfrastructure(BaseUrl string, connName string) (bool, error) {
 
 	urlStrConnInfra := BaseUrl + "onc/connection?name==" + connName + "&select(id)"
 	infraConnID, err := client.GET(urlStrConnInfra)
 	if err != nil {
 		fmt.Println("Error getting client ID:", err)
-		return "", err
+		return false, err
 	}
 
 	urlStrConnInfraDel := BaseUrl + "onc/connection/" + infraConnID
@@ -79,7 +77,7 @@ func deleteServiceAndInfrastructure(BaseUrl string, connName string) (string, er
 	deleteResponse, err := client.DELETE(urlStrConnInfraDel)
 	if err != nil {
 		fmt.Println("Deleting Error:", err)
-		return "", err
+		return false, err
 	} else {
 		fmt.Print(`Delete Response:`, deleteResponse)
 
