@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-func DELETE(urlStr string) (string, error) {
+func DELETE(urlStr string) (bool, error) {
 	// Create a new cookie jar
 	jar, _ := cookiejar.New(nil)
 
@@ -19,7 +19,7 @@ func DELETE(urlStr string) (string, error) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		fmt.Println("Error parsing URL:", err)
-		return "", err
+		return false, err
 	}
 
 	// Parse the cookies from your cookie file and add them to the cookie jar
@@ -37,14 +37,14 @@ func DELETE(urlStr string) (string, error) {
 	req, err := http.NewRequest("DELETE", urlStr, nil)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return "", err
+		return false, err
 	}
 
 	// Send the request
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error sending request:", err)
-		return "", err
+		return false, err
 	}
 	defer resp.Body.Close()
 
@@ -52,11 +52,11 @@ func DELETE(urlStr string) (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return "", err
+		return false, err
 	}
 
 	// Print the JSON response
-	fmt.Println("deneme", string(body))
+	fmt.Println("delete response:", string(body))
 
-	return "Deleted", nil
+	return true, nil
 }
