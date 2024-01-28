@@ -1,2 +1,8 @@
 Django==4.2.2
 python-dotenv==1.0.0
+whitenoise==6.6.0
+django-admin-datta==1.0.10
+django-dynamic-datatb==1.0.25
+django-api-generator==1.0.17
+gunicorn==21.2.0
+requests==2.31.0

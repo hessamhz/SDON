@@ -220,4 +220,4 @@ tags
 
 *.sqlite3
 
-static
+# static
