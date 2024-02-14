@@ -1,7 +1,15 @@
 import json
 
 import requests
-from dashboard.functions.load_cookies import load_cookies
+from load_cookies import load_cookies
+
+import os
+import django
+
+# Set up Django environment
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'napback.settings')
+django.setup()
+
 from django.conf import settings
 
 
@@ -84,8 +92,8 @@ def get_infra(base_url, cookie_file):
 infra_data = get_infra(base_url, cookie_file)
 print("\nInfrastructure Data:")
 print(json.dumps(infra_data, indent=4))
+"""
 
-service_data = get_service(base_url, cookie_file)
+service_data = get_service()
 print("Service Data:")
 print(json.dumps(service_data, indent=4))
-"""
