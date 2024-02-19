@@ -16,7 +16,7 @@ def dashboard(request):
 
     sourceNode = type = targetNode = None
 
-    if (request.GET['sourceNode'] == request.GET['targetNode']):
+    if (request.GET.get('sourceNode') == request.GET.get('targetNode')):
         return render(request, 'hpanel/user_panel.html', {'error_message': "Source and Target nodes cannot be the same."})
 
     if (request.GET['sourceNode'] == 'Node 1'):
