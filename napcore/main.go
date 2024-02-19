@@ -23,7 +23,7 @@ func main() {
 			HierarchicalLevel: "infrastructure",
 		}
 
-		//Only  one 10GB or 	up to 10 1GB Service is allowed
+		//Only  one 10GB or 	up to 8 1GB Service is allowed
 
 		ServiceParams := functions.ServiceParams{
 			BaseUrl:   BASE_URL,
