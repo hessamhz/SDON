@@ -15,10 +15,11 @@ async def run():
     # Subscribe to the subjects you expect Django to publish to
     await nc.subscribe("create.infrastructure", cb=message_handler)
     await nc.subscribe("create.service", cb=message_handler)
-    await nc.subscribe("delete.infrastructure", cb=message_handler)
-    await nc.subscribe("delete.both", cb=message_handler)
-    await nc.subscribe("delete.service", cb=message_handler)
-
+    await nc.subscribe("delete", cb=message_handler)
+    await nc.subscribe("delete", cb=message_handler)
+    await nc.subscribe("delete", cb=message_handler)
+    await nc.subscribe("visualize.service",cb=message_handler)
+    await nc.subscribe("visualize.infrastructure",cb=message_handler)
     # Add more subscriptions as necessary
 
     print("Listening for messages on subscribed subjects...")

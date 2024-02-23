@@ -73,15 +73,15 @@ def dashboard(request):
                 # Publish message for deleting infrastructure if deleteType is 'Infrastructure' 
                 if 'Infrastructure' in deleteType:
                     message = f"DeleteInfrastructure,{sourceNode},{targetNode}"
-                    send_nats_message('delete.infrastructure',message)
+                    send_nats_message('delete',message)
                 # Publish message for deleting service if deleteType is 'Service'
                 if 'Service' in deleteType:
                     message = f"DeleteService,{sourceNode},{targetNode}"
-                    send_nats_message('delete.service',message)
+                    send_nats_message('delete',message)
                 # Publish message for deleting both infrastructure and service if deleteType is 'Both'
                 if 'Both' in deleteType:
                     message = f"DeleteBoth,{sourceNode},{targetNode}"
-                    send_nats_message('delete.both',message)
+                    send_nats_message('delete',message)
 
 
 
