@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"napcore/env"
 	"napcore/internal/functions"
+	"os/exec"
 
 	"github.com/joho/godotenv"
 )
@@ -12,7 +13,13 @@ func main() {
 	godotenv.Load()
 
 	env := env.SetEnv()
+
 	BASE_URL := env.BaseURL
+	err := runBashScript("./update_cookies.sh")
+	if err != nil {
+		fmt.Println("Error executing bash script: ", err)
+		return
+	}
 	/*
 		Params := functions.InfrastructureParams{
 			BaseUrl:           BASE_URL,
@@ -75,4 +82,11 @@ func main() {
 	} else {
 		fmt.Println("CurrentInfrastructures", VisInfraResponse)
 	}
+
+}
+
+func runBashScript(scriptPath string) error {
+	cmd := exec.Command("bash", scriptPath)
+	err := cmd.Run()
+	return err
 }
