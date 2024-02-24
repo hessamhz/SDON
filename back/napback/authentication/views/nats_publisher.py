@@ -11,3 +11,4 @@ async def publish_message(subject, message):
 def send_nats_message(subject, message):
     asyncio.run(publish_message(subject, message))
     print("message sended")
+    print(subject,message)
