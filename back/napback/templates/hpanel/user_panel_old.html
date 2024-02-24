@@ -153,8 +153,8 @@
                     </select>
                     <label for="serviceRate">Service Rate</label>
                     <select id="serviceRate" name="serviceRate" onchange="updateNumberOfServices()" required>
-                        <option value="1Gb">1 Gb</option>
-                        <option value="10Gb">10 Gb</option>
+                        <option value="1Gbps">1 Gbps</option>
+                        <option value="10Gbps">10 Gbps</option>
                     </select>
                     <label for="numberOfService">Number of Service</label>
                     <select id="numberOfService" name="numberOfService" required>
@@ -165,31 +165,31 @@
             </div>
 
             <!-- Tab Content for Delete Infrastructure/Service -->
-            <!-- Tab Content for Delete Infrastructure/Service -->
             <div id="DeleteInfrastructure" class="tabcontent">
                 <h3>Delete Infrastructure/Service</h3>
                 <form id="formDeleteInfrastructure">
                     <label>Service/Infrastructure:</label>
                     <div>
-                        <input type="radio" id="deleteService" name="deleteType" value="Service" checked>
+                        <input type="checkbox" id="deleteService" name="deleteType" value="Service">
                         <label for="deleteService">Service</label>
-                        <input type="radio" id="deleteInfrastructure" name="deleteType" value="Infrastructure">
+                        <input type="checkbox" id="deleteInfrastructure" name="deleteType" value="Infrastructure">
                         <label for="deleteInfrastructure">Infrastructure</label>
-                        <input type="radio" id="deleteBoth" name="deleteType" value="Both">
+                        <input type="checkbox" id="deleteBoth" name="deleteType" value="Both">
                         <label for="deleteBoth">Both</label>
                     </div>
-                    <div id="infraNameInput" style="display: none;">
-                        <label for="infraName">Infrastructure Name:</label>
-                        <input type="text" id="infraName" name="infraName">
-                    </div>
-                    <div id="serviceNameInput">
-                        <label for="serviceName">Service Name:</label>
-                        <input type="text" id="serviceName" name="serviceName">
-                    </div>
+                    <label for="sourceNodeDelete">Source Node</label>
+                    <select id="sourceNodeDelete" name="sourceNode" onchange="updateTargetNodes('Delete')" required>
+                        <option value="Node 1">Node 1</option>
+                        <option value="Node 2">Node 2</option>
+                        <option value="Node 3">Node 3</option>
+                    </select>
+                    <label for="targetNodeDelete">Target Node</label>
+                    <select id="targetNodeDelete" name="targetNode" required>
+                        <!-- Options will be dynamically updated based on source node selection -->
+                    </select>
                     <input type="submit" value="Delete">
                 </form>
             </div>
-
 
 			<!-- Log Out Button -->
 			<form method="post" action="{% url 'logout' %}">
@@ -202,11 +202,17 @@
 			</form>
 		</div>
 
-        <!-- Right Panel for Listing Services/Infrastructure, now dynamically updated -->
+        <!-- Right Panel for Listing Services/Infrastructure -->
         <div class="widget-right-panel">
             <h3 class="panel-title">Existing Services/Infrastructure</h3>
+            <button type="button" id="refreshButton" onclick="refreshList()">Refresh</button>
             <ul class="service-list">
                 <!-- Dynamic content will be loaded here -->
+                <!-- Placeholder content - replace with server-generated content -->
+                <li>Service A</li>
+                <li>Service B</li>
+                <li>Infrastructure C</li>
+                <!-- ... -->
             </ul>
         </div>
 	</div>
@@ -281,87 +287,21 @@
         var serviceRate = document.getElementById("serviceRate").value;
         var numberOfServiceSelect = document.getElementById("numberOfService");
 
-        numberOfServiceSelect.innerHTML = ''; // Clear existing options
-
-        // Adjust the logic to properly handle the initialization for "1Gbps"
-        if (serviceRate === '1Gb') {
-            for (var i = 1; i <= 8; i++) { // Assuming you want to allow up to 8 services for 1Gbps
+        numberOfServiceSelect.innerHTML = '';
+        if (serviceRate === '1Gbps') {
+            for (var i = 1; i <= 8; i++) {
                 var option = document.createElement('option');
                 option.value = i;
                 option.textContent = i;
                 numberOfServiceSelect.appendChild(option);
             }
-        } else { // For 10Gbps, assuming only 1 service is allowed
+        } else {
             var option = document.createElement('option');
             option.value = 1;
             option.textContent = 1;
             numberOfServiceSelect.appendChild(option);
         }
     }
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize delete type actions
-        const deleteTypeInputs = document.querySelectorAll('input[name="deleteType"]');
-        deleteTypeInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                updateDeleteTypeVisibility();
-            });
-        });
-        updateDeleteTypeVisibility(); // Call on initial load
-    });
-
-    function updateDeleteTypeVisibility() {
-        const deleteTypeValue = document.querySelector('input[name="deleteType"]:checked').value;
-        const infraNameInput = document.getElementById('infraNameInput');
-        const serviceNameInput = document.getElementById('serviceNameInput');
-
-        if (deleteTypeValue === 'Infrastructure') {
-            infraNameInput.style.display = 'block';
-            serviceNameInput.style.display = 'none';
-        } else if (deleteTypeValue === 'Service') {
-            infraNameInput.style.display = 'none';
-            serviceNameInput.style.display = 'block';
-        } else { // Both
-            infraNameInput.style.display = 'block';
-            serviceNameInput.style.display = 'block';
-        }
-    }
-
-
-    // Ensure updateNumberOfServices is called on page load for initialization
-    document.addEventListener("DOMContentLoaded", function() {
-        updateTargetNodes('Infra');
-        updateTargetNodes('Service');
-        updateNumberOfServices(); // Initialize the number of services based on the current rate
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize delete type actions
-        const deleteTypeInputs = document.querySelectorAll('input[name="deleteType"]');
-        deleteTypeInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                updateDeleteTypeVisibility();
-            });
-        });
-        updateDeleteTypeVisibility(); // Call on initial load
-    });
-
-    function updateDeleteTypeVisibility() {
-        const deleteTypeValue = document.querySelector('input[name="deleteType"]:checked').value;
-        const infraNameInput = document.getElementById('infraNameInput');
-        const serviceNameInput = document.getElementById('serviceNameInput');
-
-        if (deleteTypeValue === 'Infrastructure') {
-            infraNameInput.style.display = 'block';
-            serviceNameInput.style.display = 'none';
-        } else if (deleteTypeValue === 'Service') {
-            infraNameInput.style.display = 'none';
-            serviceNameInput.style.display = 'block';
-        } else { // Both
-            infraNameInput.style.display = 'block';
-            serviceNameInput.style.display = 'block';
-        }
-    }
-
 
     // Initialize dropdowns on page load
     document.addEventListener("DOMContentLoaded", function() {
@@ -372,27 +312,22 @@
     });
 
     function refreshList() {
-    fetch('/api/get-latest-data/') // Adjust this URL to match your setup
-        .then(response => response.json())
-        .then(data => {
-            const list = document.querySelector('.service-list');
-            list.innerHTML = ''; // Clear existing list
-            data.data_points.forEach(item => {
-                // Example: Create a list item for each data point
-                const listItem = document.createElement('li');
-                listItem.textContent = `${item.measurement} - ${item.field}: ${item.value} (Time: ${item.time})`;
-                list.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
+        // Example: Fetch new list from the server
+        // This is a placeholder code, replace it with actual server request logic
+        fetch('/path-to-your-service-list')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.querySelector('.service-list');
+                list.innerHTML = ''; // Clear existing list
+                data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = item.name; // Assuming 'name' is a property of your items
+                    list.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
     }
 
-
-    // Schedule refreshList to run on page load and every 10 seconds thereafter
-    document.addEventListener('DOMContentLoaded', function() {
-        refreshList();
-        setInterval(refreshList, 10000); // Adjust interval as needed
-    });
 
 </script>
 </body>
