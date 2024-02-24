@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Define SSH connection details
-USERNAME="hessam"
-HOST="10.10.5.103"
-PASSWORD="hessam123"
+
 
 # Use sshpass for the SSH connection to run commands and retrieve the cookie
 COOKIE=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "$USERNAME@$HOST" '
