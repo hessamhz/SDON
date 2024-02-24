@@ -3,6 +3,7 @@ package functions
 import (
 	"fmt"
 	"napcore/internal/client"
+	"strings"
 )
 
 func DeleteConn(BASE_URL string, conn_name string, deleteInfrastructure bool) (bool, error) {
@@ -10,15 +11,9 @@ func DeleteConn(BASE_URL string, conn_name string, deleteInfrastructure bool) (b
 	var err error
 
 	if deleteInfrastructure {
-		// First Delete Services
-		deleteResponse, err = deleteService(BASE_URL, conn_name)
-		if err != nil {
-			return deleteResponse, err
-		}
-		fmt.Println(deleteResponse)
 
 		// Delete Infrastructure as well
-		infraResponse, infraErr := deleteServiceAndInfrastructure(BASE_URL, conn_name)
+		infraResponse, infraErr := deleteInfrastructureFunc(BASE_URL, conn_name)
 		if infraErr != nil {
 			return infraResponse, infraErr
 		}
@@ -37,13 +32,16 @@ func DeleteConn(BASE_URL string, conn_name string, deleteInfrastructure bool) (b
 }
 
 func deleteService(BaseUrl string, conn_name string) (bool, error) {
-
-	urlStrConn := BaseUrl + "onc/connection?name==" + conn_name + "&select(id)"
+	fmt.Println(conn_name)
+	connection := strings.Trim(conn_name, "[]'")
+	urlStrConn := BaseUrl + "onc/connection?name==" + connection + "&select(id)"
+	fmt.Println(urlStrConn)
 	connID, err := client.GET(urlStrConn)
 	if err != nil {
 		fmt.Println("Error getting client ID:", err)
 		return false, err
 	}
+	fmt.Println(connID)
 
 	urlStrConnSerDel := BaseUrl + "onc/connection/" + connID
 	fmt.Println("CONNID", urlStrConnSerDel)
@@ -57,9 +55,10 @@ func deleteService(BaseUrl string, conn_name string) (bool, error) {
 
 }
 
-func deleteServiceAndInfrastructure(BaseUrl string, connName string) (bool, error) {
+func deleteInfrastructureFunc(BaseUrl string, connName string) (bool, error) {
 
-	urlStrConnInfra := BaseUrl + "onc/connection?name==" + connName + "&select(id)"
+	connection := strings.Trim(connName, "[]'")
+	urlStrConnInfra := BaseUrl + "onc/connection?name==" + connection + "&select(id)"
 	infraConnID, err := client.GET(urlStrConnInfra)
 	if err != nil {
 		fmt.Println("Error getting client ID:", err)

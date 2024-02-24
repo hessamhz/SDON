@@ -53,7 +53,7 @@ func VisInfrastructure(params VisInfrastructureParameters) ([]Infrastructure, er
 		fmt.Println("Error making GET request:", err)
 		return nil, err
 	}
-
+	//fmt.Println(responseBody)
 	// Fix for concatenated JSON objects
 	fixedResponseBody := "[" + strings.Join(strings.Split(responseBody, "}{"), "},{") + "]"
 

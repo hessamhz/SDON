@@ -14,36 +14,51 @@ from authentication.views.nats_publisher import send_nats_message
 @login_required(login_url='login')
 def dashboard(request):
     #print(request.user)  # User object representing the currently authenticated user
-
+    print(request)
+    print(request.GET)
     sourceNode = type = targetNode = None
 
-    if (request.GET.get('sourceNode') == request.GET.get('targetNode')):
-        return render(request, 'hpanel/user_panel.html', {'error_message': "Source and Target nodes cannot be the same."})
 
-    if (request.GET['sourceNode'] == 'Node 1'):
-        sourceNode = 'team1-NE-1'
-    elif (request.GET['sourceNode'] == 'Node 2'):
-        sourceNode = 'team1-NE-2'
-    elif (request.GET['sourceNode'] == 'Node 3'):
-            sourceNode = 'team1-NE-3'
-                
-    if (request.GET['targetNode'] == 'Node 1'):
-        targetNode = 'team1-NE-1'
-    elif (request.GET['targetNode'] == 'Node 2'):
-        targetNode = 'team1-NE-2'
-    elif (request.GET['targetNode'] == 'Node 3'):
-        targetNode = 'team1-NE-3'
 
 
     if 'connName' in request.GET:
         # Parameter 'connName' exists, set type to 'CreateInfrastructure'
     
         type = 'CreateInfrastructure'
+        
+        if (request.GET['sourceNode'] == 'Node 1'):
+            sourceNode = 'team1-NE-1'
+        elif (request.GET['sourceNode'] == 'Node 2'):
+            sourceNode = 'team1-NE-2'
+        elif (request.GET['sourceNode'] == 'Node 3'):
+                sourceNode = 'team1-NE-3'
+                    
+        if (request.GET['targetNode'] == 'Node 1'):
+            targetNode = 'team1-NE-1'
+        elif (request.GET['targetNode'] == 'Node 2'):
+            targetNode = 'team1-NE-2'
+        elif (request.GET['targetNode'] == 'Node 3'):
+            targetNode = 'team1-NE-3'
     elif 'serviceRate' in request.GET:
         # Parameter 'serviceRate' exists, set type to 'CreateService'
         type = 'CreateService'
-    elif 'deleteType' in request.GET:
+        
+        if (request.GET['sourceNode'] == 'Node 1'):
+            sourceNode = 'team1-NE-1'
+        elif (request.GET['sourceNode'] == 'Node 2'):
+            sourceNode = 'team1-NE-2'
+        elif (request.GET['sourceNode'] == 'Node 3'):
+                sourceNode = 'team1-NE-3'
+                    
+        if (request.GET['targetNode'] == 'Node 1'):
+            targetNode = 'team1-NE-1'
+        elif (request.GET['targetNode'] == 'Node 2'):
+            targetNode = 'team1-NE-2'
+        elif (request.GET['targetNode'] == 'Node 3'):
+            targetNode = 'team1-NE-3'
+    else:
         # Parameter 'deleteType' exists, set type to 'DeleteInfrastructure'
+        print("mehraba")
         type = 'DeleteInfrastructure'
 
     # Use the 'type' variable as needed in your code
@@ -66,26 +81,26 @@ def dashboard(request):
             message = f"CreateService,{sourceNode},{targetNode},{serviceRate},{numberOfService}"
             send_nats_message('create.service', message)
 
-    elif type == 'DeleteInfrastructure': 
-                deleteType = request.GET.getlist('deleteType')  # In case multiple checkboxes are selected 
-                infraName = request.GET.getlist("infraName",None) 
-                serviceName=request.GET.getlist("serviceName",None) 
-                # Print for debugging 
-                if(infraName): 
-                    print(f"DeleteInfrastructure Form - Delete Type: {deleteType}, Infra Name: {infraName}") 
-                # Publish message for deleting infrastructure if deleteType is 'Infrastructure'  
-                if 'Infrastructure' in deleteType: 
-                    message = f"DeleteInfrastructure,{infraName}" 
-                    send_nats_message('delete',message) 
-                # Publish message for deleting service if deleteType is 'Service' 
-                if 'Service' in deleteType: 
-                    message = f"DeleteService,{serviceName}" 
-                    send_nats_message('delete',message) 
-                # Publish message for deleting both infrastructure and service if deleteType is 'Both' 
-                if 'Both' in deleteType: 
-                    message = f"DeleteBoth,{infraName},{serviceName}" 
-                    send_nats_message('delete',message)
-
+    elif type == 'DeleteInfrastructure':
+            deleteType = request.GET.getlist('deleteType')  # In case multiple checkboxes are selected
+            infraName = request.GET.getlist("infraName",None)
+            serviceName=request.GET.getlist("serviceName",None)
+            print(deleteType,infraName,serviceName,"buradayımmmmmmmmmmmmm")
+            # Print for debugging
+            if(infraName):
+                print(f"DeleteInfrastructure Form - Delete Type: {deleteType}, Infra Name: {infraName}","Service Name: {serviceName}")
+            # Publish message for deleting infrastructure if deleteType is 'Infrastructure' 
+            if 'Infrastructure' in deleteType:
+                message = f"DeleteInfrastructure,{infraName}"
+                send_nats_message('delete',message)
+            # Publish message for deleting service if deleteType is 'Service'
+            if 'Service' in deleteType:
+                message = f"DeleteService,{serviceName}"
+                send_nats_message('delete',message)
+            # Publish message for deleting both infrastructure and service if deleteType is 'Both'
+            if 'Both' in deleteType:
+                message = f"DeleteBoth,{infraName},{serviceName}"
+                send_nats_message('delete',message)
 
 
 

@@ -153,8 +153,8 @@
                     </select>
                     <label for="serviceRate">Service Rate</label>
                     <select id="serviceRate" name="serviceRate" onchange="updateNumberOfServices()" required>
-                        <option value="1Gbps">1 Gbps</option>
-                        <option value="10Gbps">10 Gbps</option>
+                        <option value="1Gb">1 Gb</option>
+                        <option value="10Gb">10 Gb</option>
                     </select>
                     <label for="numberOfService">Number of Service</label>
                     <select id="numberOfService" name="numberOfService" required>
@@ -281,21 +281,59 @@
         var serviceRate = document.getElementById("serviceRate").value;
         var numberOfServiceSelect = document.getElementById("numberOfService");
 
-        numberOfServiceSelect.innerHTML = '';
-        if (serviceRate === '1Gbps') {
-            for (var i = 1; i <= 8; i++) {
+        numberOfServiceSelect.innerHTML = ''; // Clear existing options
+
+        // Adjust the logic to properly handle the initialization for "1Gbps"
+        if (serviceRate === '1Gb') {
+            for (var i = 1; i <= 8; i++) { // Assuming you want to allow up to 8 services for 1Gbps
                 var option = document.createElement('option');
                 option.value = i;
                 option.textContent = i;
                 numberOfServiceSelect.appendChild(option);
             }
-        } else {
+        } else { // For 10Gbps, assuming only 1 service is allowed
             var option = document.createElement('option');
             option.value = 1;
             option.textContent = 1;
             numberOfServiceSelect.appendChild(option);
         }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize delete type actions
+        const deleteTypeInputs = document.querySelectorAll('input[name="deleteType"]');
+        deleteTypeInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                updateDeleteTypeVisibility();
+            });
+        });
+        updateDeleteTypeVisibility(); // Call on initial load
+    });
+
+    function updateDeleteTypeVisibility() {
+        const deleteTypeValue = document.querySelector('input[name="deleteType"]:checked').value;
+        const infraNameInput = document.getElementById('infraNameInput');
+        const serviceNameInput = document.getElementById('serviceNameInput');
+
+        if (deleteTypeValue === 'Infrastructure') {
+            infraNameInput.style.display = 'block';
+            serviceNameInput.style.display = 'none';
+        } else if (deleteTypeValue === 'Service') {
+            infraNameInput.style.display = 'none';
+            serviceNameInput.style.display = 'block';
+        } else { // Both
+            infraNameInput.style.display = 'block';
+            serviceNameInput.style.display = 'block';
+        }
+    }
+
+
+    // Ensure updateNumberOfServices is called on page load for initialization
+    document.addEventListener("DOMContentLoaded", function() {
+        updateTargetNodes('Infra');
+        updateTargetNodes('Service');
+        updateNumberOfServices(); // Initialize the number of services based on the current rate
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize delete type actions
         const deleteTypeInputs = document.querySelectorAll('input[name="deleteType"]');
