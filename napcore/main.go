@@ -255,18 +255,18 @@ func handleNATSMessage(msg *nats.Msg, BASE_URL string) {
 		// CreateLPResponse := functions.CreateLP(ServiceParams)
 
 	} else if values[0] == "DeleteInfrastructure" {
-		neSrc := values[1]
-		neDst := values[2]
-		connName := values[3]
-		deleteInfrastructureAsWell := values[4]
+		// neSrc := values[1]
+		// neDst := values[2]
+		// connName := values[3]
+		// deleteInfrastructureAsWell := values[4]
 
-		fmt.Println("neSrc:", neSrc)
-		fmt.Println("neDst:", neDst)
-		fmt.Println("connName:", connName)
-		fmt.Println("deleteInfrastructureAsWell:", deleteInfrastructureAsWell)
+		// fmt.Println("neSrc:", neSrc)
+		// fmt.Println("neDst:", neDst)
+		// fmt.Println("connName:", connName)
+		// fmt.Println("deleteInfrastructureAsWell:", deleteInfrastructureAsWell)
 
 		// Handle the delete message
-		// DeleteConnResponse, err := functions.DeleteConn(ServParams, InfParams, deleteInfrastructure)
+		// DeleteConnResponse, err := functions.DeleteConn(BASE_URL, connName, deleteInfrastructureAsWell)
 		// if err != nil {
 		// 	fmt.Println("Error", err)
 		// } else {

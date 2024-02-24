@@ -66,22 +66,26 @@ def dashboard(request):
             message = f"CreateService,{sourceNode},{targetNode},{serviceRate},{numberOfService}"
             send_nats_message('create.service', message)
 
-    elif type == 'DeleteInfrastructure':
-                deleteType = request.GET.getlist('deleteType')  # In case multiple checkboxes are selected
-                # Print for debugging
-                print(f"DeleteInfrastructure Form - Delete Type: {deleteType}, Source Node: {sourceNode}, Target Node: {targetNode}")
-                # Publish message for deleting infrastructure if deleteType is 'Infrastructure' 
-                if 'Infrastructure' in deleteType:
-                    message = f"DeleteInfrastructure,{sourceNode},{targetNode}"
+    elif type == 'DeleteInfrastructure': 
+                deleteType = request.GET.getlist('deleteType')  # In case multiple checkboxes are selected 
+                infraName = request.GET.getlist("infraName",None) 
+                serviceName=request.GET.getlist("serviceName",None) 
+                # Print for debugging 
+                if(infraName): 
+                    print(f"DeleteInfrastructure Form - Delete Type: {deleteType}, Infra Name: {infraName}") 
+                # Publish message for deleting infrastructure if deleteType is 'Infrastructure'  
+                if 'Infrastructure' in deleteType: 
+                    message = f"DeleteInfrastructure,{infraName}" 
+                    send_nats_message('delete',message) 
+                # Publish message for deleting service if deleteType is 'Service' 
+                if 'Service' in deleteType: 
+                    message = f"DeleteService,{serviceName}" 
+                    send_nats_message('delete',message) 
+                # Publish message for deleting both infrastructure and service if deleteType is 'Both' 
+                if 'Both' in deleteType: 
+                    message = f"DeleteBoth,{infraName},{serviceName}" 
                     send_nats_message('delete',message)
-                # Publish message for deleting service if deleteType is 'Service'
-                if 'Service' in deleteType:
-                    message = f"DeleteService,{sourceNode},{targetNode}"
-                    send_nats_message('delete',message)
-                # Publish message for deleting both infrastructure and service if deleteType is 'Both'
-                if 'Both' in deleteType:
-                    message = f"DeleteBoth,{sourceNode},{targetNode}"
-                    send_nats_message('delete',message)
+
 
 
 
