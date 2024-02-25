@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"encoding/json"
 	"fmt"
 	"napcore/internal/client"
 	"regexp"
@@ -56,8 +57,8 @@ func CreateLP(Params ServiceParams) string {
 		fmt.Println("Error:", err)
 		return "Error has occured for postPortIDs function"
 	}
-
-	return strconv.Itoa(Params.NbService) + "Service Created with each rate:" + Params.ServRate + postResponse
+	fmt.Println(postResponse)
+	return strconv.Itoa(Params.NbService) + "Service Created with each rate:" + Params.ServRate
 }
 
 func getPorts(BaseURL, neName string, serviceState string) []string {
@@ -112,7 +113,7 @@ func getCommonPorts(portSrc []string, portDst []string, numberOfService int) []s
 	for _, item := range portDst {
 		if count[item] > 0 {
 			common = append(common, item)
-			if len(common) == numberOfService {
+			if len(common) == 8 {
 				break
 			}
 		}
@@ -152,24 +153,59 @@ func getPortIDs(commonPorts []string, BaseUrl string, neSrc string, neDst string
 
 }
 
-func postPortIDs(portIDs [][]string, Params ServiceParams) (string, error) {
+// Assuming ErrorResponse structure based on the JSON error message you provided.
+type ErrorResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
 
-	var postResponse string
+func postPortIDs(portIDs [][]string, Params ServiceParams) ([]string, error) {
+	var responses []string
 	postUrlStr := Params.BaseUrl + "onc/connection"
-	for i := 0; i < Params.NbService; i++ {
-		serviceName := "Service_" + strconv.Itoa(i+1)
-		serviceInfo := "posting to " + postUrlStr + " from source port ID: " + portIDs[i][0] + " to destination port ID: " + portIDs[i][1] + " with service name: " + serviceName
-		fmt.Println(serviceInfo)
-		postResponse, err := client.POST(postUrlStr, portIDs[i][0], portIDs[i][1], serviceName, "ConnLpEthCbr", Params.ServRate, "service")
-		if err != nil {
-			fmt.Println("Error", err)
-			return "", err
-		} else {
-			return postResponse, err
+	fmt.Println("Port IDs:", portIDs)
+	fmt.Println("Number of Services:", Params.NbService)
+
+	for serviceIndex := 0; serviceIndex < Params.NbService; serviceIndex++ {
+		serviceCreated := false
+
+		for portIndex, portIDPair := range portIDs {
+			serviceName := fmt.Sprintf("Service_%d_Attempt_%d", serviceIndex+1, portIndex+1)
+			serviceInfo := fmt.Sprintf("Attempting to post to %s from source port ID: %s to destination port ID: %s with service name: %s", postUrlStr, portIDPair[0], portIDPair[1], serviceName)
+			fmt.Println(serviceInfo)
+
+			postResponse, err := client.POST(postUrlStr, portIDPair[0], portIDPair[1], serviceName, "ConnLpEthCbr", Params.ServRate, "service")
+			if err != nil {
+				// If there's an error, handle it according to its content
+				fmt.Println("Error occurred:", err)
+				continue // Proceed to the next port pair if error handling is not specified here
+			}
+
+			// Check if postResponse is an error response
+			if isErrorResponse(postResponse) {
+				fmt.Println("Detected Connection-endNotIdle error for", serviceName, "with port IDs", portIDPair)
+				continue // Try next port pair for the same service
+			} else {
+				responses = append(responses, postResponse) // Successfully created the service
+				serviceCreated = true
+				break // Successfully created a service, proceed to the next service
+			}
 		}
 
+		if !serviceCreated {
+			fmt.Println("Failed to create service after trying all port pairs for service index", serviceIndex+1)
+		}
 	}
-	return postResponse, nil
-	//client.POST(postUrlStr, Port_IDs[0][0], Port_IDs[0][1], "TestSecSrvc", "ConnLpEthCbr", "1Gb", "service")
-	//client.POST(postUrlStr, Port_IDs[0][0], Port_IDs[0][1], "TestSecSrvc", "ConnLpEthCbr", "10Gb", "service")
+
+	return responses, nil // Return the successful responses
+}
+
+// Adjusted isErrorResponse to handle string that could be normal response or error
+func isErrorResponse(response string) bool {
+	var errResp ErrorResponse
+
+	if err := json.Unmarshal([]byte(response), &errResp); err != nil {
+		return false // If parsing fails, assume it's not the specific error we're looking for
+	}
+
+	return errResp.Status == "INTERNAL_SERVER_ERROR" && errResp.Message == "Connection-endNotIdle"
 }
