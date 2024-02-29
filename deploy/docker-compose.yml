@@ -28,6 +28,7 @@ services:
 
 
     napcore:
+        restart: always
         build:
             context: ../napcore
             dockerfile: build/Dockerfile
