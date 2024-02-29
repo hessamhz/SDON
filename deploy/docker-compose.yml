@@ -9,9 +9,11 @@ services:
             - .env
         volumes:
             - db:/napback/db
+            - static_volume:/usr/src/app/static
+            - media_volume:/usr/src/app/media
         container_name: napback
         environment:
-            - STAGE = dev
+            - STAGE=dev
         ports:
             - "8000:8000"
 
@@ -32,6 +34,23 @@ services:
         env_file:
             - .env
         container_name: napcore
+        depends_on:
+            - nats
+
+    nginx:
+        restart: always
+        build:
+            context: ../nginx
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"
+        depends_on:
+            - napback
+        volumes:
+            - static_volume:/usr/src/app/static
+            - media_volume:/usr/src/app/media
 
 volumes:
     db:
+    static_volume:
+    media_volume:
