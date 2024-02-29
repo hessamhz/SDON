@@ -1,5 +1,6 @@
 #!/bin/sh
 
-python wordcounter/manage.py migrate
+python manage.py migrate
+python manage.py collectstatic --noinput
 
 exec "$@"

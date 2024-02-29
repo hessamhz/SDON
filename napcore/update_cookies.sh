@@ -4,7 +4,8 @@
 
 
 # Use sshpass for the SSH connection to run commands and retrieve the cookie
-COOKIE=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "$USERNAME@$HOST" '
+# COOKIE=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "$USERNAME@$HOST" '
+COOKIE=$(sshpass -p "hessam123" ssh -o StrictHostKeyChecking=no "hessam@10.10.5.103" '
 cd nap
 ./script-auth.sh
 cat cookie.curl

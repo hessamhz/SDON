@@ -13,13 +13,7 @@ from authentication.views.nats_publisher import send_nats_message
 
 @login_required(login_url='login')
 def dashboard(request):
-    #print(request.user)  # User object representing the currently authenticated user
-    print(request)
-    print(request.GET)
     sourceNode = type = targetNode = None
-
-
-
 
     if 'connName' in request.GET:
         # Parameter 'connName' exists, set type to 'CreateInfrastructure'
@@ -39,6 +33,7 @@ def dashboard(request):
             targetNode = 'team1-NE-2'
         elif (request.GET['targetNode'] == 'Node 3'):
             targetNode = 'team1-NE-3'
+
     elif 'serviceRate' in request.GET:
         # Parameter 'serviceRate' exists, set type to 'CreateService'
         type = 'CreateService'
@@ -58,13 +53,7 @@ def dashboard(request):
             targetNode = 'team1-NE-3'
     else:
         # Parameter 'deleteType' exists, set type to 'DeleteInfrastructure'
-        print("mehraba")
         type = 'DeleteInfrastructure'
-
-    # Use the 'type' variable as needed in your code
-
-    # For debugging, you can print the type
-    print("Type:", type)
 
     if type == 'CreateInfrastructure':
         connectionName = request.GET['connName']
@@ -76,7 +65,6 @@ def dashboard(request):
     elif type == 'CreateService':
             serviceRate = request.GET['serviceRate']
             numberOfService = request.GET['numberOfService']
-            # Print for debugging
             print(f"CreateService Form - Source Node: {sourceNode}, Target Node: {targetNode}, Service Rate: {serviceRate}, Number of Service: {numberOfService}")
             message = f"CreateService,{sourceNode},{targetNode},{serviceRate},{numberOfService}"
             send_nats_message('create.service', message)
@@ -85,8 +73,6 @@ def dashboard(request):
             deleteType = request.GET.getlist('deleteType')  # In case multiple checkboxes are selected
             infraName = request.GET.getlist("infraName",None)
             serviceName=request.GET.getlist("serviceName",None)
-            print(deleteType,infraName,serviceName,"buradayımmmmmmmmmmmmm")
-            # Print for debugging
             if(infraName):
                 print(f"DeleteInfrastructure Form - Delete Type: {deleteType}, Infra Name: {infraName}","Service Name: {serviceName}")
             # Publish message for deleting infrastructure if deleteType is 'Infrastructure' 
@@ -101,7 +87,6 @@ def dashboard(request):
             if 'Both' in deleteType:
                 message = f"DeleteBoth,{infraName},{serviceName}"
                 send_nats_message('delete',message)
-
 
 
     return render(request, 'hpanel/user_panel.html')

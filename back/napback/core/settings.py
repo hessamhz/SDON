@@ -160,3 +160,9 @@ SITE_NAME = config.get("SITE_NAME")
 
 BASE_URL = config.get("BASE_URL")
 COOKIE_FILE = config.get("COOKIE_FILE")
+
+# Admin
+ADMINS = (("admin", "admin@polimi.it"),)
+ADMIN_USERNAME = "admin"
+ADMIN_EMAIL = "admin@polimi.it"
+ADMIN_INITIAL_PASSWORD = "admin"  # To be changed after first login by admin

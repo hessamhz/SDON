@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+    napback:
+        build:
+            context: ../back
+            dockerfile: build/Dockerfile
+        env_file:
+            - .env
+        container_name: napback
+        environment:
+            - STAGE = dev
+        ports:
+            - "8000:8000"
+        # networks:
+        #    - nap
+
+    nats:
+        image: nats:latest
+        container_name: nats_server
+        ports:
+        - "4222:4222"  # Client port
+        - "8222:8222"  # HTTP monitoring port
+        - "6222:6222"  # Cluster port
+
+
+    napcore:
+        build:
+            context: ../napcore
+            dockerfile: build/Dockerfile
+        env_file:
+            - .env
+        container_name: napcore
+
+#networks:
+#    linktree-react:
+#        driver: bridge

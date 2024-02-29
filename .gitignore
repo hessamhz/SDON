@@ -2,3 +2,4 @@ cookie.curl
 script-auth.sh
 script.sh
 .env
+.venv

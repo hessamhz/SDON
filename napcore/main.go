@@ -35,7 +35,7 @@ func main() {
 
 	// Connect to NATS
 
-	nc, err := nats.Connect(nats.DefaultURL)
+	nc, err := nats.Connect("127.0.0.1:4222")
 	if err != nil {
 		fmt.Println("Error connecting to NATS:", err)
 		return
@@ -75,84 +75,8 @@ func main() {
 		handleNATSMessage(msg, BASE_URL)
 	})
 
-	// Listen for messages from NATS the topic "delete"
-	// _, e = nc.Subscribe("delete", func(msg *nats.Msg) {
-	// 	// Handle the received message here
-	// 	fmt.Printf("Received message: %s\n", string(msg.Data))
-	// 	receivedMessage := string(msg.Data)
-	// 	values := strings.Split(receivedMessage, ",")
-	// 	var delete, neSrc, neDst, connName, deleteInfrastructureAsWell string
-	// 	if len(values) >= 2 {
-	// 		delete = values[0]
-	// 		neSrc = values[1]
-	// 		neDst = values[2]
-	// 		connName = values[3]
-	// 		deleteInfrastructureAsWell = values[4]
-	// 	}
-
-	// 	fmt.Println("delete:", delete)
-	// 	fmt.Println("neSrc:", neSrc)
-	// 	fmt.Println("neDst:", neDst)
-	// 	fmt.Println("connName:", connName)
-	// 	fmt.Println("deleteInfrastructureAsWell:", deleteInfrastructureAsWell)
-	// })
-	// if e != nil {
-	// 	fmt.Println("Error subscribing to NATS:", err)
-	// 	return
-	// }
 	select {}
-	/*
-			Params := functions.InfrastructureParams{
-				BaseUrl:           BASE_URL,
-				InfraLine:         "OTU2x-1-1-1",
-				NeSrc:             "team1-NE-1",
-				NeDst:             "team1-NE-2",
-				ConnName:          "FatihConnection",
-				HierarchicalLevel: "infrastructure",
-			}
 
-			//Only  one 10GB or 	up to 8 1GB Service is allowed
-
-			ServiceParams := functions.ServiceParams{
-				BaseUrl:   BASE_URL,
-				NeSrc:     "team1-NE-1",
-				NeDst:     "team1-NE-2",
-				ServRate:  "10Gb",
-				NbService: 1,
-			}
-
-		VisParameters := functions.VisParameters{
-			BaseUrl: BASE_URL,
-		}
-		VisInfrastructureParameters := functions.VisInfrastructureParameters{
-			BaseUrl: BASE_URL,
-		}
-
-		/*
-			DeleteInfrastructureAsWell := true
-
-			CreateInfraResponse, err := functions.CreateInfra(Params)
-			if err != nil {
-				fmt.Println("Error", err)
-			} else {
-				fmt.Println("CreateInfraResponse", CreateInfraResponse)
-			}
-
-			fmt.Println("Infrastructure Created now its turn for CreateLPResponse ")
-
-			CreateLPResponse := functions.CreateLP(ServiceParams)
-			fmt.Println("CreateLPResponse", CreateLPResponse)
-			fmt.Println("Lightpath Created now its turn for Delete Connections ")
-
-			DeleteResponse, err := functions.DeleteConn(ServiceParams, Params, DeleteInfrastructureAsWell)
-			if err != nil {
-				fmt.Println("Error", err)
-			} else {
-				fmt.Println("DeleteResponse", DeleteResponse)
-			}
-
-
-	*/
 }
 func writeToInfluxDBAsync(url, baseURL, token, bucket, org string) {
 	go func() {

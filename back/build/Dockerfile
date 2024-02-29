@@ -1,43 +1,44 @@
-# Base image
-FROM python:3.10.6-alpine
+# pull official base image
+FROM python:3.10-alpine
 
-# Create the appropriate directories
 ENV APP_HOME=/usr/src/app
-RUN mkdir -p $APP_HOME
 
-# Set the working directory
+RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/static
+RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
-# Copy the requirements file
-COPY requirements/common.txt $APP_HOME/requirements/
+ENV PYTHONDONTWRITEBYTECODE 1
 
-# Copy the entrypoint file
-COPY build/entrypoint.sh $APP_HOME/entrypoint.sh
+ENV PYTHONUNBUFFERED 1
 
-# Copy the .env file
-COPY wordcounter/.env $APP_HOME/
+RUN apk update \
+    && apk add libcurl curl-dev python3-dev libc-dev postgresql-dev build-base gcc python3-dev musl-dev libffi-dev \
+    py3-pillow freetype-dev libpng-dev openblas-dev g++ \
+    jpeg-dev zlib-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev libxslt-dev
 
-# Install dependencies
-RUN pip install --no-cache-dir -r $APP_HOME/requirements/common.txt
+RUN pip install --upgrade pip
 
-# Copy the Django project
-COPY wordcounter $APP_HOME/wordcounter
+COPY ./requirements/dev.txt $APP_HOME/dev.txt
+RUN pip install -r dev.txt
+RUN addgroup -S app && adduser -S app -G app
 
-# Switch to the non-root user
-RUN addgroup -S app && adduser -S -G app app
+COPY napback $APP_HOME
+
+COPY ./build/entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r$//g' /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 RUN chown -R app:app $APP_HOME
+RUN chmod -R 755 $APP_HOME/media
+RUN chmod -R 755 $APP_HOME/static
+
+# change to the app user
 USER app
 
-# Set the entrypoint script
-RUN chmod +x $APP_HOME/entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ]
 
-# Expose the port that Gunicorn runs on
-EXPOSE 8000
 
-# Command to run Gunicorn
-# TODO I usually use gunicorn here, but it wasn't needed in this context
-# CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "wordcounter.core.asgi:application", "-k", "wordcounter.core.worker.Worker"]
-
-# Command to run Django
-CMD ["python", "wordcounter/manage.py", "runserver", "0.0.0.0:8000"]
+# TODO:
+CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "src.core.wsgi:application"]

@@ -6,3 +6,6 @@ django-dynamic-datatb==1.0.25
 django-api-generator==1.0.17
 gunicorn==21.2.0
 requests==2.31.0
+nats-py==2.7.0
+influxdb-client==1.40.0
+psycopg2-binary==2.9.9
