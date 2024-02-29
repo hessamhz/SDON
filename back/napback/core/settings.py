@@ -107,7 +107,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db" / "db.sqlite3",
     }
 }
 
@@ -166,3 +166,9 @@ ADMINS = (("admin", "admin@polimi.it"),)
 ADMIN_USERNAME = "admin"
 ADMIN_EMAIL = "admin@polimi.it"
 ADMIN_INITIAL_PASSWORD = "admin"  # To be changed after first login by admin
+
+# InfluxDB connection details
+INFLUX_TOKEN= config.get("INFLUX_TOKEN")
+INFLUX_URL= config.get("INFLUX_URL")
+INFLUX_ORG = config.get("INFLUX_ORG")
+INFLUX_BUCKET = config.get("INFLUX_BUCKET")

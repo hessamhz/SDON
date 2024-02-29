@@ -7,13 +7,14 @@ services:
             dockerfile: build/Dockerfile
         env_file:
             - .env
+        volumes:
+            - db:/napback/db
         container_name: napback
         environment:
             - STAGE = dev
         ports:
             - "8000:8000"
-        # networks:
-        #    - nap
+
 
     nats:
         image: nats:latest
@@ -32,6 +33,5 @@ services:
             - .env
         container_name: napcore
 
-#networks:
-#    linktree-react:
-#        driver: bridge
+volumes:
+    db:

@@ -25,6 +25,7 @@ func main() {
 	InfluxToken := env.InfluxToken
 	InfluxBucket := env.InfluxBucket
 	InfluxOrg := env.InfluxOrg
+	NatsURL := env.NatsURL
 
 	err := runBashScript("update_cookies.sh")
 	if err != nil {
@@ -35,7 +36,7 @@ func main() {
 
 	// Connect to NATS
 
-	nc, err := nats.Connect("127.0.0.1:4222")
+	nc, err := nats.Connect(NatsURL)
 	if err != nil {
 		fmt.Println("Error connecting to NATS:", err)
 		return

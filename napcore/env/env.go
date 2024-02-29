@@ -13,6 +13,7 @@ type NapcoreEnv struct {
 	InfluxToken  string
 	InfluxBucket string
 	InfluxOrg    string
+	NatsURL      string
 }
 
 func SetEnv() NapcoreEnv {
@@ -25,6 +26,11 @@ func SetEnv() NapcoreEnv {
 	baseURL := os.Getenv("BASE_URL")
 	if baseURL == "" {
 		missingVars = append(missingVars, "BASE_URL")
+	}
+
+	natsURL := os.Getenv("NATS_URL")
+	if baseURL == "" {
+		missingVars = append(missingVars, "NATS_URL")
 	}
 
 	influxURL := os.Getenv("INFLUX_URL")
@@ -57,5 +63,6 @@ func SetEnv() NapcoreEnv {
 		InfluxToken:  influxToken,
 		InfluxBucket: influxBucket,
 		InfluxOrg:    influxOrg,
+		NatsURL:      natsURL,
 	}
 }

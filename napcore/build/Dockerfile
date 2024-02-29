@@ -6,7 +6,8 @@ FROM golang:1.21-alpine AS builder
 # Install git.
 # Git is required for fetching the dependencies.
 
-RUN apk update && apk add --no-cache git ca-certificates bash
+RUN apk update && apk add --no-cache git ca-certificates bash openssh sshpass grep
+# RUN apk add --no-cache openssh sshpass
 
 # Create appuser.
 ENV USER=napcore_user
@@ -57,7 +58,7 @@ RUN ls -l /go/bin
 FROM alpine
 
 # Install ca-certificates and bash if needed
-RUN apk update && apk add --no-cache ca-certificates bash
+RUN apk update && apk add --no-cache ca-certificates bash openssh sshpass grep
 
 # Import the user and group files from the builder.
 COPY --from=builder /etc/passwd /etc/passwd
@@ -69,7 +70,7 @@ COPY --from=builder /go/bin/napcore /napcore
 # Copy the .env file and script if they need to be in the image
 COPY --from=builder /go/bin/.env /.env
 COPY --from=builder /go/bin/update_cookies.sh /update_cookies.sh
-RUN chmod +x /go/bin/update_cookies.sh
+RUN chmod +x ./update_cookies.sh
 
 COPY --from=builder /go/bin/.env /go/bin/.env
 COPY --from=builder /go/bin/update_cookies.sh /go/bin/update_cookies.sh

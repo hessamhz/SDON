@@ -1,13 +1,14 @@
 from django.http import JsonResponse
 from influxdb_client import InfluxDBClient
+from django.conf import settings
 
 def get_latest_data_json(request):
     # InfluxDB connection details
-    
-    INFLUX_TOKEN="DQc0h1wojixbOJGiT7gAXkUhAGn_Ztpo0xzVPLQ5N1hD9ou56ozK1x1Fn4pBvSjDkiJ8CUlWtKt2ncJafg20CA=="
-    INFLUX_URL="https://us-east-1-1.aws.cloud2.influxdata.com"
-    INFLUX_ORG = "politecnico di milano"
-    INFLUX_BUCKET = "SDON_BUCKET"
+
+    INFLUX_TOKEN = settings.INFLUX_TOKEN
+    INFLUX_URL = settings.INFLUX_URL
+    INFLUX_ORG = settings.INFLUX_ORG
+    INFLUX_BUCKET = settings.INFLUX_BUCKET
 
     try:
         client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)

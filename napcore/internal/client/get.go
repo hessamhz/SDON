@@ -24,7 +24,7 @@ func GET(urlStr string) (string, error) {
 	}
 
 	// Parse the cookies from your cookie file and add them to the cookie jar
-	utils.ParseCookies(jar, "cookie.curl", parsedURL)
+	utils.ParseCookies(jar, "/tmp/cookie.curl", parsedURL)
 
 	// Create a custom HTTP client with insecure transport (bypassing SSL certificate verification)
 	client := &http.Client{
