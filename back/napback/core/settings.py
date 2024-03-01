@@ -101,15 +101,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# DATABASE CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db" / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": config.get("DEFAULT_DATABASE_NAME"),
+        "USER": config.get("DEFAULT_DATABASE_USER"),
+        "PASSWORD": config.get("DEFAULT_DATABASE_PASSWORD"),
+        "HOST": config.get("DEFAULT_DATABASE_HOST"),
+        "PORT": config.get("DEFAULT_DATABASE_PORT"),
+        "TEST": {
+            "DEPENDENCIES": [],
+        },
+    },
 }
+# END OF DATABASE CONFIGURATION
 
 
 # Password validation

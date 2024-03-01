@@ -1,6 +1,20 @@
 version: "3.9"
 
 services:
+    db:
+        image: postgres:latest
+        container_name: postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            - .env
+        environment:
+            POSTGRES_USER: ${DEFAULT_DATABASE_USER}
+            POSTGRES_PASSWORD: ${DEFAULT_DATABASE_PASSWORD}
+            POSTGRES_DB: ${DEFAULT_DATABASE_NAME}
+
     napback:
         build:
             context: ../back
@@ -16,6 +30,9 @@ services:
             - STAGE=dev
         ports:
             - "8000:8000"
+        depends_on:
+            - db
+            - nats
 
 
     nats:
@@ -37,6 +54,10 @@ services:
         container_name: napcore
         depends_on:
             - nats
+        environment:
+            SSH_USERNAME: ${SSH_USERNAME}
+            SSH_PASSWORD: ${SSH_PASSWORD}
+            SSH_HOST: ${SSH_HOST}
 
     nginx:
         restart: always
@@ -55,3 +76,4 @@ volumes:
     db:
     static_volume:
     media_volume:
+    postgres_data:
