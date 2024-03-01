@@ -174,4 +174,4 @@ INFLUX_ORG = config.get("INFLUX_ORG")
 INFLUX_BUCKET = config.get("INFLUX_BUCKET")
 
 # NATS connection details
-NATS_URL = config.get("NATS_URL")
+NATS_URL = config.get("DNATS_URL")
