@@ -3,7 +3,7 @@
 
 ## **Description of the project**
 
-![image](https://github.com/hessamhz/SDON/assets/61333402/15c7de4d-ff1b-4fd2-882b-d64acc15e129)
+![image](https://github.com/hessamhz/SDON/assets/61333402/4a90cf33-4970-494a-8389-41d28fcc4f7b)
 
 
 The project aims to automatize the creation and monitoring of optical services. 
