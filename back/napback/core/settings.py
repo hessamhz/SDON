@@ -172,3 +172,6 @@ INFLUX_TOKEN= config.get("INFLUX_TOKEN")
 INFLUX_URL= config.get("INFLUX_URL")
 INFLUX_ORG = config.get("INFLUX_ORG")
 INFLUX_BUCKET = config.get("INFLUX_BUCKET")
+
+# NATS connection details
+NATS_URL = config.get("NATS_URL")

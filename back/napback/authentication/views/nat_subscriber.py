@@ -1,10 +1,11 @@
 import asyncio
 from nats.aio.client import Client as NATS
+from django.conf import settings
 
 async def run():
     nc = NATS()
 
-    await nc.connect(servers=["nats://localhost:4222"])
+    await nc.connect(servers=[settings.NATS_URL])
 
     async def message_handler(msg):
         subject = msg.subject
