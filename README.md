@@ -1,91 +1,83 @@
+
 # **Project**: "Scalable Microservice Architecture for Creation and Monitoring of Optical Service"
-### Team Challengers: " Fatih Temiz, Hessam Hashemizadeh, Tugrul Kok, Nisanur Camuzcu"
 
-## **Description of the project**
+#### Team Challengers: " Fatih Temiz, Hessam Hashemizadeh, Tugrul Kok, Nisanur Camuzcu"
 
+## Table of Contents  
+- [Introduction](#introduction)
+- [Installation](#installation) 
+- [Usage](#usage) 
+- [Features](#features) 
+- [Results](#results)
+- [Project Structure](#project_structure)
+  
+## **Introduction**
+This project is designed to streamline the control and management of infrastructure, services, and lightpaths for SMOptics controller. The application leverages a suite of technologies including Nginx, Django, PostgreSQL, InfluxDB, NATS messaging, and a custom Go service, all containerized using Docker for ease of deployment, developed on top of the SMOptics Controller API.
+
+  
 ![image](https://github.com/hessamhz/SDON/assets/61333402/4a90cf33-4970-494a-8389-41d28fcc4f7b)
 
-
-The project aims to automatize the creation and monitoring of optical services. 
+  
 It hinders the underlying complexities of the controller. It is an intent-based SDN program where the user declares what to do and it solves how to do it.
-The project is developed on top of the SMOptics Controller API.
 
+## **Installation**
+To set up the SMOptics Network Management App, ensure you have Docker and Docker Compose installed on your system. You also need to be provided with environment files which for security reasons will not be provided in the repository. 
 
+Then, follow these steps: 
+1. Clone the repository:
+  ```
+  git clone https://github.com/hessamhz/SDON.git
+  cd SDON/deploy
+  ```
+2. Build the compose file:
+```
+docker-compose build
+```
+3. Run the compose: 
+```
+docker-compose up
+```
+4. Make sure all of the services are up:
+``` 
+docker-compose ps
+```
+Just a quick note that ```.env``` file should be present to complete the build and running the project.
+Another thing to mention is that is it required to open the port of the nginx if you are planning to deploy on a server with.
+```
+sudo ufw allow 80
+```
+  
+## **Usage** 
+Once the services are up and running, you can access the Django admin panel to manage users and view the system's status. The application performs the following key functions: 
+-  **Infrastructure and Service Management**: Create and delete network resources through the user-friendly dashboard. 
+-  **Robust and Asynchronous Communication**: The connection between Django and SMOptics controller is completely Asynchronous, hence the user will not be delayed and we can manage retrying the failures. 
+-  **Real-time Monitoring**: Go services updates the InfluxDB time-series database every 10 seconds to reflect the current status of services. 
+-  **Automated Session Key Updates**: Ensures continuous and secure communication with the SMOptics controller.
 
-User requests through UI for creating infrastructure, creating services and deleting connections(service/infrastructure) and actively user can visualize current services/infrastructure.
-User requests proxied via Nginx and Django handle the request and publish to the related NATS topic. Golang Services subscribes to related topics and handles the request via HTTP request to the controller.
-On the GO side current services and infrastructure are retrieving, and adding retrieved data into InfluxDB periodically.
-On the Django side, InfluxDB queried and passed into UI for visualization.
-The project is Dockerized and deployed via Nginx on the server.
-
-
-## **Description of the repository**
-
-
-
-- **back/_**: This folder contains the backend of the project 
-    - **back/requirements/**: Python/Django requirements
-    - **back/build/**: Dockerfile for backend
-    - **back/napback/**: Django
-        - **back/napback/authentication/**
-            - **back/napback/authentication/migrations/**
-            - **back/napback/authentication/static**
-            - **back/napback/authentication/views/**
-                - **back/napback/authentication/views/dashboard.py**:
-                - **back/napback/authentication/views/login.py**:
-                - **back/napback/authentication/views/nat_publisher.py**:
-                - **back/napback/authentication/views/nat_subscriber.py**:testing subscribe message that send from Django
-                - **back/napback/authentication/views/view_infraservice.py**:
-            - **back/napback/authentication/views/apps.py**:
-            - **back/napback/authentication/views/urls.py**:
-    - **back/napback/core/**: Django core (settings, wsgi, asgi,URLs)
-    - **back/napback/dashboard/**:
-    - **back/napback/static/**:
-    - **back/napback/templates/**:
-            - **back/napback/templates/hpanel/user_panel.html**: Dashboard HTML file
-            - **back/napback/templates/hpanel/index.html** : Login page HTML file
-        - **back/napback/templates/login.html**: Template for login page
-    - **back/napback/manage.py**
-    - **back/napback/.gitignore**
-    - **back/napback/pyproject.toml**
-    - **back/napback/setup.cfg**
-          
-        - 
-    - 
-    - **_lib/program.py_**: ...
-- **napcore/_**: This folder contains the backend of the project
-    - **_napcore/intenal/client/**: This folder contains functions for HTTP request(GET,POST,DELETE) to SDN Controller which are used in functions (getting NE ID, posting for creation, deleting connection)
-    - **_napcore/internal/functions/_**: This folder contains functions of the project (Create LP, Create Infra, DeleteConn, VisualizeService, VisualizeInfra)
-        - **_napcore/internal/functions/create_LP.go** : Implementing Creating Services
-        - **_napcore/internal/functions/create_infra.go** : Implementing Creating Infrastructure
-        - **_napcore/internal/functions/delete_conn.go** : Implementing Deleting Services / Infrastructure
-        - **_napcore/internal/functions/handle_nats.go** : Subscribing NATS messages and Modifying Message formats to be able to use in go functions(creations)
-        - **_napcore/internal/functions/run_bash_script.go** : Running bash script(update_cookies.sh) for authentication
-        - **_napcore/internal/functions/visualize_service.go** : Visualizing Services
-        - **_napcore/internal/functions/visualize_infrastructure.go** : Visualizing Infrastructure
-        - **_napcore/internal/functions/write_to_influxdb.go** : Getting visualization data from visualize_service and visualize_infrastructure functions and writing to influxdb periodically(every 10s)
-    -**_napcore/go.mod**:
-    -**_napcore/go.sum**:
-    -**_napcore/main.go**:This is main for golang services
-    -**_napcore/update_cookies.sh**: Bash script for updating local cookie.curl file via SSH.
-          
- - **deploy/_**: This folder contains docker compose
- - **nginx/_**: This folder configuration file and docker file for nginx web server
-
-## **How to run the project**
-
-Describe how to clone the project and run it. Specify commands, etc.
+## **Features**  
+- User-friendly dashboard for managing optical network resources 
+- Real-time service status monitoring 
+- Secure message queuing with NATS for asynchronous communication 
+- Automated session key management for enhanced security 
+- Dockerized services for easy deployment and scalability
 
 ## **Results**
 
-Describe the main results of your project (max 250 words)
+  
+
+User requests through UI for creating infrastructure, creating services and deleting connections(service/infrastructure) and actively user can visualize current services/infrastructure.
+
 We have developed a microservice-based architecture for the creation and monitoring of optical services involving cutting-edge technologies (InfluxDB, NATS, Docker/Docker Compose, Nginx, Django, Golang)
+
 Project automatizes Creating 10GB Infrastructure, Creating 10GB & 1GB Service, Deleting Connections and Visualizing Services & Infrastructure.
+
 Login Page:
+
 ![image](https://github.com/hessamhz/SDON/assets/61333402/d99cee60-0882-4876-b409-94a0b7693711)
+
 Dashboard Page:
+
 ![image](https://github.com/hessamhz/SDON/assets/61333402/d9d1d589-d9c6-4cc0-b4a5-1857108883aa)
 
-
-
-
+## **Project Structure**  
+The structure of the project files and structure is [here](https://github.com/hessamhz/SDON/blob/main/repo_desc.md). 
