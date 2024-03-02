@@ -56,12 +56,6 @@
 
 -  **back/napback/setup.cfg**
 
--
-
--
-
--  **_lib/program.py_**: ...
-
 -  **napcore/_**: This folder contains the backend of the project
 
 -  **_napcore/intenal/client/**: This folder contains functions for HTTP request(GET,POST,DELETE) to SDN Controller which are used in functions (getting NE ID, posting for creation, deleting connection)
@@ -92,8 +86,8 @@
 
 -**_napcore/update_cookies.sh**: Bash script for updating local cookie.curl file via SSH.
 
--  **deploy/_**: This folder contains docker compose
+- **deploy/_**: This folder contains docker compose
 
--  **nginx/_**: This folder configuration file and docker file for nginx web server
+- **nginx/_**: This folder configuration file and docker file for nginx web server
 
   
